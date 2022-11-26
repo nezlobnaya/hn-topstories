@@ -19,7 +19,7 @@ const Story = ({ id, title, url, text, score, by, time }: Props) => {
             className="mb-2"
         >
             <Card.Body className='m-1 p-1'>
-                <Card.Link href={url} target="_blank" rel="noreferrer">{title}</Card.Link>
+                <Card.Link href={url} style={{ textDecoration: 'none'}} target="_blank" rel="noreferrer">{title}</Card.Link>
             <ListGroup as='ul' horizontal='sm' className="list-group-flush">
                 {/* commented out, for dev purposes only */}
                 {/* <ListGroupItem as="li">ID: {id}</ListGroupItem> */}
