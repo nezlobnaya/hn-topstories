@@ -5,21 +5,20 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Container } from "react-bootstrap";
 
 function App() {
-
   const [topStories, setTopStories] = useState([]);
- 
+
   useEffect(() => {
     getTopStoriesIdsArray().then((apiIdsData) => {
-        setTopStories(apiIdsData);
-    }
-)}, [])
+      setTopStories(apiIdsData);
+    });
+  }, []);
 
   return (
     <Container className="my-4">
       <h1>Top Stories</h1>
-        <List topstories={topStories}/>
+      <List topstories={topStories} />
     </Container>
-  )
+  );
 }
 
-export default App
+export default App;
