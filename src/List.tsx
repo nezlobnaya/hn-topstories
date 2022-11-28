@@ -53,12 +53,23 @@ const List = ({ topstories }: Props) => {
         <p>Stories loading...</p>
       ) : (
         <>
-          <Button variant="outline-primary" onClick={sortedByTimeStoriesArray}>
-            Sort by Time
-          </Button>
-          <Button variant="outline-primary" onClick={sortedByScoreStoriesArray}>
-            Sort by Score
-          </Button>
+          {!isLoading && storiesArray.length === 0 && <p>No stories found.</p>}
+          <div className="mb-2">
+            <Button
+              size="sm"
+              variant="outline-primary"
+              onClick={sortedByTimeStoriesArray}
+            >
+              Sort by Time
+            </Button>{" "}
+            <Button
+              size="sm"
+              variant="outline-primary"
+              onClick={sortedByScoreStoriesArray}
+            >
+              Sort by Score
+            </Button>
+          </div>
           {storiesArray.map((story: Story) => {
             return (
               <Story
