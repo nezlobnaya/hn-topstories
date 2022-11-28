@@ -18,7 +18,7 @@ const List = ({ topstories }: Props) => {
     time: number;
   }
 
-  const [storiesArray, setStoriesArray] = useState([]);
+  const [storiesArray, setStoriesArray] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -28,6 +28,14 @@ const List = ({ topstories }: Props) => {
       setIsLoading(false);
     });
   }, [topstories]);
+
+  const fetchMoreStories = () => {
+    setIsLoading(true);
+    getStoriesArray(topstories).then((apiStoriesData: any) => {
+      setStoriesArray([...storiesArray, apiStoriesData]);
+      setIsLoading(false);
+    });
+  };
 
   const sortByTime = (a: Story, b: Story) => {
     return b.time - a.time;
@@ -53,8 +61,14 @@ const List = ({ topstories }: Props) => {
         <p>Stories loading...</p>
       ) : (
         <>
-          {!isLoading && storiesArray.length === 0 && <p>No stories found.</p>}
           <div className="mb-2">
+            <Button
+              variant="outline-primary"
+              className="mr-2"
+              onClick={fetchMoreStories}
+            >
+              Fetch more stories
+            </Button>{" "}
             <Button
               size="sm"
               variant="outline-primary"
@@ -84,6 +98,7 @@ const List = ({ topstories }: Props) => {
               />
             );
           })}
+          {!isLoading && storiesArray.length === 0 && <p>No stories found.</p>}
         </>
       )}
     </>
