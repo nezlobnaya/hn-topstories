@@ -1,24 +1,20 @@
 import moment from "moment";
 import { Card, ListGroup, ListGroupItem } from "react-bootstrap";
+import { cleanText } from "./aux/helpers";
 
 interface Props {
   id: number;
   title: string;
   url: string | undefined;
-  text: string | undefined;
+  text: string;
   score: number;
   by: string;
   time: number;
 }
 
 const Story = ({ id, title, url, text, score, by, time }: Props) => {
-  text = text?.replace(/&#x([0-9A-Fa-f]+);/g, function(match, hexCode) {
-    return String.fromCharCode(parseInt(hexCode, 16));
-  })
-  .replace(/&quot;/g, '"')
-  .replace(/<p>/g, "")
-  .replace(/\[0\]/g, "")
-  .replace(/<a[^>]*>|<\/a>/g, "");
+
+  const cleanedText = cleanText(text);
 
   return (
     <Card bg="light" className="mb-2">
@@ -41,7 +37,7 @@ const Story = ({ id, title, url, text, score, by, time }: Props) => {
           </ListGroupItem>
         </ListGroup>
         <Card.Text>
-          {text}
+          {cleanedText}
         </Card.Text>
       </Card.Body>
     </Card>
