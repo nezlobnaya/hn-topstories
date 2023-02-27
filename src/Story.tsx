@@ -1,5 +1,7 @@
 import { Card, ListGroup, ListGroupItem } from "react-bootstrap";
 
+import moment from "moment";
+import { cleanText } from "./aux/helpers";
 
 interface Props {
   title: string;
@@ -11,6 +13,7 @@ interface Props {
 }
 
 const Story = ({ title, url, text, score, by, time }: Props) => {
+  const cleanedText = cleanText(text);
   return (
     <Card bg="light" className="mb-2">
       <Card.Body className="m-1 p-1">
