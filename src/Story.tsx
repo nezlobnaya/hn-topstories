@@ -1,11 +1,10 @@
 import { Card, ListGroup, ListGroupItem } from "react-bootstrap";
 
-import moment from "moment";
 
 interface Props {
   title: string;
   url: string | undefined;
-  text: string | undefined;
+  text: string;
   score: number;
   by: string;
   time: number;
@@ -31,7 +30,7 @@ const Story = ({ title, url, text, score, by, time }: Props) => {
           </ListGroupItem>
         </ListGroup>
         <Card.Text>
-          {text?.replace(/[/[`~!@#$%^&*()_|+\-=?;:'"<>\{\}\[\]\\\/]/gi, "")}
+          {cleanedText}
         </Card.Text>
       </Card.Body>
     </Card>

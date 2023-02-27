@@ -25,3 +25,7 @@ export const getStoriesArray = (storyArray: Array<any>) => {
     })
   );
 };
+
+export const cleanText = (text: string ) => {
+  return text?.replace(/&#x([0-9A-Fa-f]+);|&quot;|<p>|\[0\]|<a[^>]*>|<\/a>/g, (match, hexCode) => hexCode ? String.fromCharCode(parseInt(hexCode, 16)) : "");
+}
