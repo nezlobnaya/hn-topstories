@@ -71,7 +71,6 @@ const List = ({ topstories }: Props) => {
             return (
               <Story
                 key={story.id}
-                id={story.id}
                 title={story.title}
                 url={story.url}
                 text={story.text}

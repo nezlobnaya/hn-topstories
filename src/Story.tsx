@@ -1,8 +1,8 @@
-import moment from "moment";
 import { Card, ListGroup, ListGroupItem } from "react-bootstrap";
 
+import moment from "moment";
+
 interface Props {
-  id: number;
   title: string;
   url: string | undefined;
   text: string | undefined;
@@ -11,7 +11,7 @@ interface Props {
   time: number;
 }
 
-const Story = ({ id, title, url, text, score, by, time }: Props) => {
+const Story = ({ title, url, text, score, by, time }: Props) => {
   return (
     <Card bg="light" className="mb-2">
       <Card.Body className="m-1 p-1">
@@ -24,8 +24,6 @@ const Story = ({ id, title, url, text, score, by, time }: Props) => {
           {title}
         </Card.Link>
         <ListGroup as="ul" horizontal="sm" className="list-group-flush">
-          {/* commented out, for dev purposes only */}
-          {/* <ListGroupItem as="li">ID: {id}</ListGroupItem> */}
           <ListGroupItem as="li">
             <Card.Text>
               Score: {score} By: {by} on {moment(time * 1000).format("llll")}
