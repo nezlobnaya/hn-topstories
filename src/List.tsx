@@ -1,7 +1,8 @@
-import { getStoriesArray } from "./aux/helpers";
-import { useState, useEffect } from "react";
-import Story from "./Story";
+import { useEffect, useState } from "react";
+
 import { Button } from "react-bootstrap";
+import { getStoriesArray } from "./aux/helpers";
+import Story from "./Story";
 
 interface Props {
   topstories: Array<any>;
@@ -23,10 +24,11 @@ const List = ({ topstories }: Props) => {
 
   useEffect(() => {
     setIsLoading(true);
-    getStoriesArray(topstories).then((apiStoriesData: any) => {
-      setStoriesArray(apiStoriesData);
-      setIsLoading(false);
-    });
+    getStoriesArray(topstories)
+      .then((apiStoriesData: any) => {
+        setStoriesArray(apiStoriesData);
+        setIsLoading(false);
+      });
   }, [topstories]);
 
   const sortByTime = (a: Story, b: Story) => {
@@ -37,13 +39,9 @@ const List = ({ topstories }: Props) => {
     return b.score - a.score;
   };
 
-  const sortedByTimeStoriesArray = () => {
-    storiesArray.sort(sortByTime);
-    setStoriesArray([...storiesArray]);
-  };
-
-  const sortedByScoreStoriesArray = () => {
-    storiesArray.sort(sortByScore);
+  const sortStoriesArray = (sortBy: string) => {
+    const sortMode = sortBy === "time" ? sortByTime : sortByScore
+    storiesArray.sort(sortMode);
     setStoriesArray([...storiesArray]);
   };
 
@@ -58,23 +56,22 @@ const List = ({ topstories }: Props) => {
             <Button
               size="sm"
               variant="outline-primary"
-              onClick={sortedByTimeStoriesArray}
+              onClick={() => sortStoriesArray("time")}
             >
               Sort by Time
             </Button>{" "}
             <Button
               size="sm"
               variant="outline-primary"
-              onClick={sortedByScoreStoriesArray}
+              onClick={() => sortStoriesArray("score")}
             >
               Sort by Score
             </Button>
           </div>
-          {storiesArray.map((story: Story) => {
+          {storiesArray?.map((story: Story) => {
             return (
               <Story
                 key={story.id}
-                id={story.id}
                 title={story.title}
                 url={story.url}
                 text={story.text}
