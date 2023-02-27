@@ -24,10 +24,11 @@ const List = ({ topstories }: Props) => {
 
   useEffect(() => {
     setIsLoading(true);
-    getStoriesArray(topstories).then((apiStoriesData: any) => {
-      setStoriesArray(apiStoriesData);
-      setIsLoading(false);
-    });
+    getStoriesArray(topstories)
+      .then((apiStoriesData: any) => {
+        setStoriesArray(apiStoriesData);
+        setIsLoading(false);
+      });
   }, [topstories]);
 
   const sortByTime = (a: Story, b: Story) => {
@@ -67,7 +68,7 @@ const List = ({ topstories }: Props) => {
               Sort by Score
             </Button>
           </div>
-          {storiesArray.map((story: Story) => {
+          {storiesArray?.map((story: Story) => {
             return (
               <Story
                 key={story.id}
