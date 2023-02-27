@@ -1,22 +1,25 @@
-import { useEffect, useState } from "react";
-import List from "./List";
-import { getTopStoriesIdsArray } from "./aux/helpers";
 import "bootstrap/dist/css/bootstrap.min.css";
+
+import { useEffect, useState } from "react";
+
 import { Container } from "react-bootstrap";
+import { getTopStoriesIdsArray } from "./aux/helpers";
+import List from "./List";
 
 function App() {
   const [topStories, setTopStories] = useState([]);
 
   useEffect(() => {
-    getTopStoriesIdsArray().then((apiIdsData) => {
-      setTopStories(apiIdsData);
-    });
+    getTopStoriesIdsArray()
+      .then((apiIdsData) => {
+        setTopStories(apiIdsData);
+      });
   }, []);
 
   return (
     <Container className="my-4">
       <h1>Top Stories</h1>
-      <List topstories={topStories} />
+      {topStories.length > 0 && <List topstories={topStories} />}
     </Container>
   );
 }
