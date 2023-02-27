@@ -51,7 +51,6 @@ const List = ({ topstories }: Props) => {
         <p>Stories loading...</p>
       ) : (
         <>
-          {!isLoading && storiesArray.length === 0 && <p>No stories found.</p>}
           <div className="mb-2">
             <Button
               size="sm"

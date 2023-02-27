@@ -11,8 +11,8 @@ export const getTopStoriesIdsArray = async () => {
     return console.error(err);
   }
 };
-//TODO:experiment with different values for max and maxAge
-const storyCache = new LRU({ max: 1000, maxAge: 1000 * 60 * 5 });
+//TODO:experiment with different values for max and ttl
+const storyCache = new LRU({ max: 1000, ttl: 1000 * 60 * 5 });
 
 
 /*In this implementation, we first create a fetch pool of size 10 using the Array and fill methods, 
