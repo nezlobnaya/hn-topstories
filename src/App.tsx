@@ -19,9 +19,10 @@ function App() {
   return (
     <Container className="my-4">
       <h1>Top Stories</h1>
-      {topStories.length > 0 && <List topstories={topStories} />}
+      {topStories.length === 0 ? <p>No stories found.</p> : <List topstories={topStories} />}
     </Container>
   );
+
 }
 
 export default App;
