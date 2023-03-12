@@ -24,7 +24,7 @@ For each promise, we select the next available fetch instance from the pool usin
 We then store the response in the cache and return the data.
 Using a fetch pool can limit the number of concurrent requests and reduce the network latency and overhead, 
 especially if the API server has rate limits or connection limits.*/
-export const getStoriesArray = async (storyArray: Array<any>) => {
+export const getStoriesArray = async (storyArray: Array<any>, limit = 100) => {
   const results = [];
   let batch = [];
   //TODO:experiment with different values for fetchPoolSize
@@ -35,7 +35,16 @@ export const getStoriesArray = async (storyArray: Array<any>) => {
     .fill(null)
     .map(() => fetch);
 
-  for (let i = 0; i < storyArray.length; i++) {
+  // Retrieve n from the query string
+  const queryParams = new URLSearchParams(window.location.search);
+  const n = queryParams.get('n');
+
+  // If n is a number between 1 and 500, set the limit to that value
+  if (n !== null && !isNaN(Number(n)) && Number(n) >= 1 && Number(n) <= 500) {
+    limit = Number(n);
+  }
+
+  for (let i = 0; i < storyArray.length && results.length < limit; i++) {
     const storyIdx = storyArray[i];
     const cachedResponse = storyCache.get(storyIdx);
     //If the story is already in the cache (cachedResponse is not undefined), the cached story is pushed to the results array.
@@ -68,7 +77,7 @@ export const getStoriesArray = async (storyArray: Array<any>) => {
     }
   }
 
-  return results;
+  return results.slice(0, limit);
 };
 
 export const cleanText = (text: string) => {
