@@ -1,25 +1,34 @@
 import { useEffect, useState } from "react";
 
 import { Button } from "react-bootstrap";
-import { getStoriesArray } from "./aux/helpers";
 import Story from "./Story";
+import { getStoriesArray } from "./aux/helpers";
+
+interface TopStory {
+  id: number;
+}
 
 interface Props {
-  topstories: Array<any>;
+  topstories: Array<TopStory>;
+}
+
+interface Story {
+  id: number;
+  title: string;
+  url: string;
+  text: string;
+  score: number;
+  by: string;
+  time: number;
+}
+
+enum SortMode {
+  Time = "time",
+  Score = "score",
 }
 
 const List = ({ topstories }: Props) => {
-  interface Story {
-    id: number;
-    title: string;
-    url: string;
-    text: string;
-    score: number;
-    by: string;
-    time: number;
-  }
-
-  const [storiesArray, setStoriesArray] = useState([]);
+  const [storiesArray, setStoriesArray] = useState([] as Array<Story>);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -40,7 +49,7 @@ const List = ({ topstories }: Props) => {
   };
 
   const sortStoriesArray = (sortBy: string) => {
-    const sortMode = sortBy === "time" ? sortByTime : sortByScore
+    const sortMode = sortBy === SortMode.Time ? sortByTime : sortByScore
     storiesArray.sort(sortMode);
     setStoriesArray([...storiesArray]);
   };
@@ -55,14 +64,14 @@ const List = ({ topstories }: Props) => {
             <Button
               size="sm"
               variant="outline-primary"
-              onClick={() => sortStoriesArray("time")}
+              onClick={() => sortStoriesArray(SortMode.Time)}
             >
               Sort by Time
             </Button>{" "}
             <Button
               size="sm"
               variant="outline-primary"
-              onClick={() => sortStoriesArray("score")}
+              onClick={() => sortStoriesArray(SortMode.Score)}
             >
               Sort by Score
             </Button>
