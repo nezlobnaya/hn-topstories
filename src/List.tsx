@@ -1,26 +1,38 @@
-import { useEffect, useState } from "react";
+import { Button, Pagination } from "react-bootstrap";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { Button } from "react-bootstrap";
-import { getStoriesArray } from "./aux/helpers";
 import Story from "./Story";
+import { getStoriesArray } from "./aux/helpers";
+
+interface TopStory {
+  id: number;
+}
 
 interface Props {
-  topstories: Array<any>;
+  topstories: TopStory[];
+}
+
+
+interface Story {
+  id: number;
+  title: string;
+  url: string;
+  text: string;
+  score: number;
+  by: string;
+  time: number;
+}
+
+enum SortMode {
+  TIME = "time",
+  SCORE = "score",
 }
 
 const List = ({ topstories }: Props) => {
-  interface Story {
-    id: number;
-    title: string;
-    url: string;
-    text: string;
-    score: number;
-    by: string;
-    time: number;
-  }
-
-  const [storiesArray, setStoriesArray] = useState([]);
+  const [storiesArray, setStoriesArray] = useState<Story[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [storiesPerPage] = useState(20);
 
   useEffect(() => {
     setIsLoading(true);
@@ -31,18 +43,30 @@ const List = ({ topstories }: Props) => {
       });
   }, [topstories]);
 
-  const sortByTime = (a: Story, b: Story) => {
+  const sortByTime = useCallback((a: Story, b: Story) => {
     return b.time - a.time;
-  };
+  }, []);
 
-  const sortByScore = (a: Story, b: Story) => {
+  const sortByScore = useCallback((a: Story, b: Story) => {
     return b.score - a.score;
-  };
+  }, []);
 
-  const sortStoriesArray = (sortBy: string) => {
-    const sortMode = sortBy === "time" ? sortByTime : sortByScore
-    storiesArray.sort(sortMode);
-    setStoriesArray([...storiesArray]);
+  const sortStoriesArray = useCallback((sortBy: SortMode) => {
+    const sortMode = sortBy === SortMode.TIME ? sortByTime : sortByScore;
+    setStoriesArray((stories) => [...stories.sort(sortMode)]);
+  }, []);
+
+
+
+  const currentStories = useMemo(() => {
+    const indexOfLastStory = currentPage * storiesPerPage;
+    const indexOfFirstStory = indexOfLastStory - storiesPerPage;
+    return storiesArray.slice(indexOfFirstStory, indexOfLastStory);
+  }, [currentPage, storiesArray, storiesPerPage]);
+
+
+  const paginate = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
   };
 
   return (
@@ -55,19 +79,19 @@ const List = ({ topstories }: Props) => {
             <Button
               size="sm"
               variant="outline-primary"
-              onClick={() => sortStoriesArray("time")}
+              onClick={() => sortStoriesArray(SortMode.TIME)}
             >
               Sort by Time
             </Button>{" "}
             <Button
               size="sm"
               variant="outline-primary"
-              onClick={() => sortStoriesArray("score")}
+              onClick={() => sortStoriesArray(SortMode.SCORE)}
             >
               Sort by Score
             </Button>
           </div>
-          {storiesArray?.map((story: Story) => {
+          {currentStories.map((story: Story) => {
             return (
               <Story
                 key={story.id}
@@ -80,6 +104,19 @@ const List = ({ topstories }: Props) => {
               />
             );
           })}
+          {storiesArray.length > storiesPerPage && (
+            <Pagination>
+              {[...Array(Math.ceil(storiesArray.length / storiesPerPage))].map((_, index) => (
+                <Pagination.Item
+                  key={index}
+                  active={index + 1 === currentPage}
+                  onClick={() => paginate(index + 1)}
+                >
+                  {index + 1}
+                </Pagination.Item>
+              ))}
+            </Pagination>
+          )}
         </>
       )}
     </>
