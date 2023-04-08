@@ -24,6 +24,8 @@ const Story = ({ title, url, text, score, by, time }: Props) => {
           rel="noreferrer"
         >
           {title}
+          <br />
+          {url}
         </Card.Link>
         <ListGroup as="ul" horizontal="sm" className="list-group-flush">
           <ListGroupItem as="li">
