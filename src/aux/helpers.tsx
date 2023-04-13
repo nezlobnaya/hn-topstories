@@ -14,26 +14,20 @@ export const getTopStoriesIdsArray = async () => {
 //TODO:experiment with different values for max and ttl
 const storyCache = new LRU({ max: 1000, ttl: 1000 * 60 * 5 });
 
+/**
+ * Fetches an array of stories from the Hacker News API based on the provided storyArray.
+ * The function processes stories in chunks, allowing for concurrent fetching and improved performance.
+ * Cached stories are stored in an LRU cache to reduce the number of API requests and improve loading times.
+ * The number of stories fetched can be limited by passing the 'n' query parameter in the URL.
+ * The 'n' value must be a number between 1 and 500.
+ *
+ * @param storyArray - An array of story IDs to fetch.
+ * @param limit- The maximum number of stories to fetch (default: 100).
+ * @returns A promise that resolves to an array of fetched stories.
+ */
 
-/*In this implementation, we first create a fetch pool of size 10 using the Array and fill methods, 
-which creates an array of 10 null values and then replaces them with the fetch function. 
-We use the modulo operator (%) to select the next available fetch instance in the pool for each request.
-
-Then, we modify the batch processing logic to use batch.map instead of Promise.all to create an array of promises. 
-For each promise, we select the next available fetch instance from the pool using the modulo operator and pass the story ID to the URL. 
-We then store the response in the cache and return the data.
-Using a fetch pool can limit the number of concurrent requests and reduce the network latency and overhead, 
-especially if the API server has rate limits or connection limits.*/
-export const getStoriesArray = async (storyArray: Array<any>, limit = 100) => {
+export const getStoriesArray = async (storyArray: Array<any>, limit = 100): Promise<Array<any>> => {
   const results = [];
-  let batch = [];
-  //TODO:experiment with different values for fetchPoolSize
-  const fetchPoolSize = 10;
-  //FetchPool is an array of fetchPoolSize length that is initialized with null values and then replaced with fetch instances using the map method.
-  //This creates a pool of 10 fetch instances that can be reused for multiple requests.
-  const fetchPool = Array(fetchPoolSize)
-    .fill(null)
-    .map(() => fetch);
 
   // Retrieve n from the query string
   const queryParams = new URLSearchParams(window.location.search);
@@ -44,39 +38,41 @@ export const getStoriesArray = async (storyArray: Array<any>, limit = 100) => {
     limit = Number(n);
   }
 
-  for (let i = 0; i < storyArray.length && results.length < limit; i++) {
-    const storyIdx = storyArray[i];
-    const cachedResponse = storyCache.get(storyIdx);
-    //If the story is already in the cache (cachedResponse is not undefined), the cached story is pushed to the results array.
-    if (cachedResponse !== undefined) {
-      results.push(cachedResponse);
-    } else {
-      //Otherwise, the storyIdx is added to the batch array. 
-      batch.push(storyIdx);
-      //If the batch array has reached the maximum batch size of 10 or if this is the last element of storyArray, the batch is ready to be processed.
-      if (batch.length === 10 || i === storyArray.length - 1) {
-        //The batch is mapped to an array of promises,
-        //where each promise fetches the story object for a single story ID in the batch. 
-        //The fetchInstance is selected from the fetchPool using the modulo operator, 
-        //and the story object is parsed from the response and stored in the LRU cache.
-        const promises = batch.map(async (storyIdx, idx) => {
-          const fetchInstance = fetchPool[idx % fetchPoolSize];
-          const res = await fetchInstance(
-            `https://hacker-news.firebaseio.com/v0/item/${storyIdx}.json?print=pretty`
-          );
-          const data = await res.json();
-          storyCache.set(storyIdx, data);
-          return data;
-        });
-        // Use Promise.all to execute all the promises in the batch in parallel, and wait for all the responses to be collected. 
-        // The results of the batch are then added to the results array using the spread operator (...), and the batch array is reset for the next batch.
-        const batchResults = await Promise.all(promises);
-        results.push(...batchResults);
-        batch = [];
+  // Process stories in chunks
+  const chunkSize = 10;
+  for (let i = 0; i < storyArray.length && results.length < limit; i += chunkSize) {
+    // Slice the storyArray into batches according to the chunkSize
+    const batch = storyArray.slice(i, i + chunkSize);
+
+    // Map the batch to an array of promises
+    const promises = batch.map(async (storyIdx) => {
+      // Check if the story is cached
+      const cachedResponse = storyCache.get(storyIdx);
+
+      // If the story is cached, return the cached response
+      if (cachedResponse !== undefined) {
+        return cachedResponse;
+      } else {
+        // If the story is not cached, fetch the story data
+        const res = await fetch(
+          `https://hacker-news.firebaseio.com/v0/item/${storyIdx}.json?print=pretty`
+        );
+        const data = await res.json();
+        console.log("fetching story: ", data)
+        // Store the fetched story data in the cache
+        storyCache.set(storyIdx, data);
+        // Return the fetched story data
+        return data;
       }
-    }
+    });
+
+    // Use Promise.all to execute all the promises in the batch concurrently
+    const batchResults = await Promise.all(promises);
+    // Add the batch results to the overall results array
+    results.push(...batchResults);
   }
 
+  // Return the results array sliced according to the limit
   return results.slice(0, limit);
 };
 
