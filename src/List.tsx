@@ -20,6 +20,7 @@ interface Story {
   score: number;
   by: string;
   time: number;
+  descendants: number;
 }
 
 enum SortMode {
@@ -86,6 +87,7 @@ const List = ({ topstories }: Props) => {
                 score={story.score}
                 by={story.by}
                 time={story.time}
+                descendants={story.descendants}
               />
             );
           })}
