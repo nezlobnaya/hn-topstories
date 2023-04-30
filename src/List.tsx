@@ -95,7 +95,6 @@ const List = ({ topstories }: Props) => {
                 score={story.score}
                 by={story.by}
                 time={story.time}
-                descendants={story.descendants}
               />
             );
           })}
