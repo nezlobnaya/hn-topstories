@@ -20,6 +20,7 @@ interface Story {
   score: number;
   by: string;
   time: number;
+  descendants: number;
 }
 
 enum SortMode {
@@ -54,13 +55,21 @@ const List = ({ topstories }: Props) => {
     setStoriesArray([...storiesArray]);
   };
 
+  const buttonsContainerStyle: React.CSSProperties = {
+    position: "sticky",
+    top: 0,
+    backgroundColor: "#fff",
+    padding: "10px",
+    zIndex: 999,
+  };
+
   return (
     <>
       {isLoading ? (
         <p>Stories loading...</p>
       ) : (
         <>
-          <div className="mb-2">
+          <div className="mb-2" style={buttonsContainerStyle}>
             <Button
               size="sm"
               variant="outline-primary"
@@ -86,6 +95,7 @@ const List = ({ topstories }: Props) => {
                 score={story.score}
                 by={story.by}
                 time={story.time}
+                descendants={story.descendants}
               />
             );
           })}
