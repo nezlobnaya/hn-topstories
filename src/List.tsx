@@ -14,7 +14,7 @@ interface Props {
 
 interface Story {
   id: number;
-  title: string;
+  title: string | null;
   url: string;
   text: string;
   score: number;
@@ -89,7 +89,7 @@ const List = ({ topstories }: Props) => {
             return (
               <Story
                 key={story.id}
-                title={story.title}
+                title={story.title ?? "No title available"}
                 url={story.url}
                 text={story.text}
                 score={story.score}
