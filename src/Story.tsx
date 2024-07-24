@@ -10,9 +10,10 @@ interface Props {
   score: number;
   by: string;
   time: number;
+  descendants: number;
 }
 
-const Story = ({ title, url, text, score, by, time }: Props) => {
+const Story = ({ title, url, text, score, by, time, descendants }: Props) => {
   const cleanedText = cleanText(text);
   return (
     <Card bg="light" className="mb-2">
@@ -30,7 +31,7 @@ const Story = ({ title, url, text, score, by, time }: Props) => {
         <ListGroup as="ul" horizontal="sm" className="list-group-flush">
           <ListGroupItem as="li">
             <Card.Text>
-              Score: {score} By: {by} on {moment(time * 1000).format("llll")}
+              Score: {score} By: {by} on {moment(time * 1000).format("llll")} {descendants > 0 ? `|| Comments: ${descendants}` : ''}
             </Card.Text>
           </ListGroupItem>
         </ListGroup>
